@@ -60,11 +60,50 @@ Creating a Route Table for the Public Subnet , with
            -Destination: 0.0.0.0/0 ( The internet)
            -Target : IGW 
   As shown in the image below :
+  
   ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(79).png)
 
    Image 9.
 
 Than, I have to Associate the route table with the Public Subnet in the page shown in the image below :
+
 ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(80).png)
 
    Image 10.
+
+#### Step 5: 
+Launching an EC2 in the public subnet in the VPC we created , as shown in the image shown below:
+
+![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(86).png)
+
+   Image 11.
+   
+The specs of the EC2 are as follows :
+- OS -> Ubuntu
+- Instance type -> t3.micro
+- Public IP -> Enable
+- Security Group -> allow ssh from anywhere is my ip change.
+
+#### Test 
+I conneted to the EC2 instance, then I updated and upgraded the OS run on the VM . As shown in the images below.
+
+ ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(92).png)
+ 
+   Image 12 : Update.
+   
+![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(95).png)
+
+Image 13 : After the update was done.
+
+![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(95).png)
+
+Image 14: Through the upgrade.
+
+After this i ran a ping commmand as shown in the image below :
+
+![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(98).png)
+
+Image 15.
+
+
+As shown in the image above , the EC2 was receiving reply from google sever , which means that phase 1 was a SUCCESS.
