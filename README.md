@@ -17,7 +17,9 @@ This project was broken into different phase , and the steps taken in each of th
 
 The following are the steps for this phase:
 #### Step 1:
-Create The VPC with the name: my-1st-vpc ; and IPv4 CIDR : 10.0.0.0/16 , as shown in the image below :
+Create The VPC with:
+-name: my-1st-vpc 
+-IPv4 CIDR : 10.0.0.0/16 , as shown in the image below :
 ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(63).png)
    
    Image 3.
@@ -27,9 +29,42 @@ The reminding Setting were left on default as shown in the image below :
 
    Image 4.
 #### Step 2:
-Create a public Subnet in the VPC with name: Public-Subnet-Phase1; with CIDR : 10.0.1.0/24 .
+Create a public Subnet in the VPC with :
+-name: Public-Subnet-Phase1
+-CIDR : 10.0.1.0/24 .
 The summary of the configure in the subnet is shown in the Image below:
   ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(70).png)
 
 
+  Image 5.
 
+#### Step 3:
+Creating and Attaching an Internet Gateway (IGW)  with name: Phase1-IGW; and the IGW is attached to the VPC created at the start of this project. The reason why IGW is important in this setup ,is because it is the DOOR that connent's the VPC to the internet.    
+    ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(74).png)
+    
+   Image 6: Creation of the IGW.
+   
+   ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(75).png) 
+     
+   Image 7 : Attaching the IGW to the VPC.
+
+#### Step 4:
+Creating a Route Table for the Public Subnet , with
+  -name : Public-RT-Phase1 
+  as shown in the image below :
+![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(78).png)
+
+  Image 8.
+
+  After creating the route table , I added a route with :
+           -Destination: 0.0.0.0/0 ( The internet)
+           -Target : IGW 
+  As shown in the image below :
+  ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(79).png)
+
+   Image 9.
+
+Than, I have to Associate the route table with the Public Subnet in the page shown in the image below :
+![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(80).png)
+
+   Image 10.
