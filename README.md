@@ -22,7 +22,7 @@ Create The VPC with:
    Image 02.
 
 The reminding Setting were left on default as shown in the image below :
-   ![Alt aws](https://github.com/Adegbenga-111/AWSPublic-Private-Deployment/blob/main/Screenshot%20(64).png)
+   ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(64).png)
 
    Image 03.
 #### Step 2:
@@ -79,7 +79,7 @@ The specs of the EC2 are as follows :
 - OS -> Ubuntu
 - Instance type -> t3.micro
 - Public IP -> Enable
-- Security Group -> allow ssh from anywhere is my ip change.
+- Security Group -> allow ssh from anywhere .
 
 #### Test 
 I conneted to the EC2 instance, then I updated and upgraded the OS run on the VM . As shown in the images below.
@@ -151,9 +151,74 @@ Adding new route to the route table with:
 - Target : NAT gateway (my-NAT-GW)
   ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(106).png)
 
+  Image 20.
+ Associating the route table  with the private subnet, as shown below:
 
- 
+![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(107).png)
+
+Image 20.
+
+#### Step 9 :Launching an EC2 in the private subnet in the VPC we created , as shown in the images shown below:
+
+![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(109).png)
+
+   Image 21.
+
+![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(110).png)
+   Image 22.
+
+![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(111).png)
+
+Image 23 : in this image , you will see that the security Group  configuration the source ip for incoming traffice is 10.0.2.195 , which is the IP for the EC2 in the public subnet  .
 
 
+The specs of the EC2 are as follows :
+- OS -> Ubuntu
+- Instance type -> t3.micro
+- Public IP -> Diable
+- Security Group -> allow ssh from  only 10.0.2.195
+
+  ### Challenge Faced During The Project
+
+  When I try to access the  private EC2 in from the public EC2  this is what i got , shown below 
+
+![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(120).png)
+
+  Image 24.
+
+  The raeson for this was that the keys for two Instance where not stored on the public EC2 . In order to slove this problem i had to dowmload puTTY and start PuTTy agent and add the two keys to it .
+
+  ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(118).png)
+
+   Imgae 25.
+  
+  Then i had to configure agent forwarding  by :
+  - Enter the public EC2 public IP
+  -  go to connection-> ssh -> Auth and then allow agent forworading
+  -  than connect to the public EC2.
+    
+      ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(117).png)
+
+     Image 26: The image above shows a successful connection to the EC2 intance.
+    
+     Then i ran the  command to connect to the private EC2 : " ssh ubuntu@10.0.2.1 " , as shown in the image below :
+
+       ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(117).png)
+
+     ### Test
+     This is to test if the private EC2 has access to the internet through the public EC2 .
+
+       ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(119).png)
+
+     Image 27.
+     As shown in the image above , the test was successful
 
 
+     ### Conclusion
+     This project successfully demonstrated how to design and deploy a secure, production-ready network architecture in AWS using a custom VPC with public and private subnets. The environment was built step-by-step, beginning with a simple VPC and evolving into a complete setup that reflects real-world industry practices.
+
+A public EC2 instance was deployed as a bastion host to provide controlled access to internal resources, while a private EC2 instance was placed in an isolated subnet with no direct internet exposure. Secure access to the private server was achieved using two industry-standard methods: SSH agent forwarding and AWS Systems Manager Session Manager. This ensured that no private keys were copied to the bastion and no SSH ports needed to remain open from the internet.
+
+Critical networking components — including Internet Gateway, NAT Gateway, route tables, and Security Groups — were configured using the principle of least privilege. Through this design, outbound internet access was enabled for private resources without compromising inbound security.
+
+By completing this project, I built a strong foundation in AWS networking, EC2 access patterns, IAM roles, and secure infrastructure design. This environment now serves as a solid base for future expansions such as load balancers, auto-scaling groups, database tiers, and highly available architectures.
