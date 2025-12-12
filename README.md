@@ -13,10 +13,15 @@ This project was broken into different phase , and the steps taken in each of th
   Note: The architecture diagram will be changing as I move from one phase to another , Since things will be added as I move.
 
 The following are the steps for this phase:
+
 #### Step 1:
+
 Create The VPC with:
+
 -name: my-1st-vpc 
+
 -IPv4 CIDR : 10.0.0.0/16 , as shown in the image below :
+
 ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(63).png)
    
    Image 02.
@@ -27,8 +32,11 @@ The reminding Setting were left on default as shown in the image below :
    Image 03.
 #### Step 2:
 Create a public Subnet in the VPC with :
+
 -name: Public-Subnet-Phase1
+
 -CIDR : 10.0.1.0/24 .
+
 The summary of the configure in the subnet is shown in the Image below:
   ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(70).png)
 
@@ -36,7 +44,11 @@ The summary of the configure in the subnet is shown in the Image below:
   Image 04.
 
 #### Step 3:
-Creating and Attaching an Internet Gateway (IGW)  with name: Phase1-IGW; and the IGW is attached to the VPC created at the start of this project. The reason why IGW is important in this setup ,is because it is the DOOR that connent's the VPC to the internet.    
+Creating and Attaching an Internet Gateway (IGW)  with 
+
+- name:Phase1-IGW
+
+  and the IGW is attached to the VPC created at the start of this project. The reason why IGW is important in this setup ,is because it is the DOOR that connent's the VPC to the internet.    
     ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(74).png)
     
    Image 05: Creation of the IGW.
@@ -47,6 +59,7 @@ Creating and Attaching an Internet Gateway (IGW)  with name: Phase1-IGW; and the
 
 #### Step 4:
 Creating a Route Table for the Public Subnet , with
+
   -name : Public-RT-Phase1 
   as shown in the image below :
 ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(78).png)
@@ -54,8 +67,11 @@ Creating a Route Table for the Public Subnet , with
   Image 07.
 
   After creating the route table , I added a route with :
-           -Destination: 0.0.0.0/0 ( The internet)
-           -Target : IGW 
+ 
+   -Destination: 0.0.0.0/0 ( The internet)
+   
+   -Target : IGW 
+   
   As shown in the image below :
   
   ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(79).png)
@@ -76,9 +92,13 @@ Launching an EC2 in the public subnet in the VPC we created , as shown in the im
    Image 10.
    
 The specs of the EC2 are as follows :
+
 - OS -> Ubuntu
+
 - Instance type -> t3.micro
+
 - Public IP -> Enable
+
 - Security Group -> allow ssh from anywhere .
 
 #### Test 
@@ -116,10 +136,15 @@ Image 15
 The steps are the continuation of the following steps in the first phase .
 
 #### Step 6 : Creating a private subnet with the following configuration :
+
  - VPC -> my-1st-vpc
+ 
  - Name -> Private-Subnet
+ 
  - CIDR -> 10.0.2.0/24
+ 
  - and  I did not enable public IP Assignment
+   
 All of these above was done in the image below:
 ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(100).png)
 
@@ -140,14 +165,18 @@ The image above shows the name of the NAT gate way , the VPC it under and other 
 
 #### Step 8 : Creating a Route Table That is Associate to the Private Subnet.
 Creating the route table with the following settings :
+
 -Name:Private-RT
+
 -VPC : my-1st-vpc
  As shown in the image below :
  ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(105).png)
 
    Image 19.
 Adding new route to the route table with: 
+
 -Destination : 0.0.0.0/0
+
 - Target : NAT gateway (my-NAT-GW)
   ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(106).png)
 
@@ -173,12 +202,16 @@ Image 23 : in this image , you will see that the security Group  configuration t
 
 
 The specs of the EC2 are as follows :
+
 - OS -> Ubuntu
+
 - Instance type -> t3.micro
+
 - Public IP -> Diable
+
 - Security Group -> allow ssh from  only 10.0.2.195
 
-  ### Challenge Faced During The Project
+  ### Challenges Faced During The Project
 
   When I try to access the  private EC2 in from the public EC2  this is what i got , shown below 
 
@@ -193,8 +226,11 @@ The specs of the EC2 are as follows :
    Imgae 25.
   
   Then i had to configure agent forwarding  by :
+  
   - Enter the public EC2 public IP
+  
   -  go to connection-> ssh -> Auth and then allow agent forworading
+  
   -  than connect to the public EC2.
     
       ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(117).png)
