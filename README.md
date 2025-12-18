@@ -1,260 +1,153 @@
-# AWS-Public-Private-Deployment
-## Objective 
-The of the objective of this project is to gain the needed skills to deploy , manage and troubleshoot VPC's ,Subnet(Both PUBLIC and PRIVATE ) ,Internet Gateway (IGW) , NAT Gataway,Route tables and how they come together to create real life cloud IT architecture and Infrastructure.    
+# AWS Public & Private Network Deployment
 
-## Steps To Build 
-This project was broken into different phase , and the steps taken in each of these phase will be explain in detail .
-### Phase 1: AWS VPC With Public Subnet and Internet Gateway 
-#### Architecture Diagram For Phase 1
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(76).png)
- 
-  Image 01.
-  
-  Note: The architecture diagram will be changing as I move from one phase to another , Since things will be added as I move.
+## Executive Summary
 
-The following are the steps for this phase:
+This project demonstrates the design, deployment, and troubleshooting of a **secure AWS VPC architecture** using public and private subnets. It simulates a real-world cloud environment where public-facing access is tightly controlled and private resources are isolated, while still maintaining outbound internet connectivity.
 
-#### Step 1:
+The project focuses on **AWS networking fundamentals, secure EC2 access patterns, routing, and operational troubleshooting**, aligning closely with Cloud Support and Junior Cloud Engineer responsibilities.
 
-Create The VPC with:
+---
 
--name: my-1st-vpc 
+## Problem Statement
 
--IPv4 CIDR : 10.0.0.0/16 , as shown in the image below :
+Organizations require cloud networks that:
 
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(63).png)
-   
-   Image 02.
+* Expose only necessary resources to the internet
+* Isolate internal systems from direct public access
+* Allow private resources to reach the internet securely
+* Support safe administrative access and troubleshooting
 
-The reminding Setting were left on default as shown in the image below :
-   ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(64).png)
+This project solves that problem by implementing a **bastion-host-based architecture** with a NAT gateway and least-privilege network controls.
 
-   Image 03.
-#### Step 2:
-Create a public Subnet in the VPC with :
+---
 
--name: Public-Subnet-Phase1
+## Architecture Overview
 
--CIDR : 10.0.1.0/24 .
+### High-Level Design
 
-The summary of the configure in the subnet is shown in the Image below:
-  ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(70).png)
+* Custom VPC with CIDR `10.0.0.0/16`
+* One public subnet (bastion host)
+* One private subnet (internal workload)
+* Internet Gateway for public access
+* NAT Gateway for private outbound traffic
+* Separate route tables for public and private subnets
 
+### Traffic Flow
 
-  Image 04.
+* Administrator → Public EC2 (Bastion Host)
+* Bastion Host → Private EC2 (SSH)
+* Private EC2 → Internet (via NAT Gateway)
 
-#### Step 3:
-Creating and Attaching an Internet Gateway (IGW)  with 
+### Architecture Diagram
 
-- name:Phase1-IGW
+*(See architecture images in the repository for each phase)*
 
-  and the IGW is attached to the VPC created at the start of this project. The reason why IGW is important in this setup ,is because it is the DOOR that connent's the VPC to the internet.    
-    ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(74).png)
-    
-   Image 05: Creation of the IGW.
-   
-   ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(75).png) 
-     
-   Image 06: Attaching the IGW to the VPC.
+---
 
-#### Step 4:
-Creating a Route Table for the Public Subnet , with
+## Build Phases
 
-  -name : Public-RT-Phase1 
-  as shown in the image below :
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(78).png)
+### Phase 1: Public Subnet with Internet Access
 
-  Image 07.
+**Components Implemented:**
 
-  After creating the route table , I added a route with :
- 
-   -Destination: 0.0.0.0/0 ( The internet)
-   
-   -Target : IGW 
-   
-  As shown in the image below :
-  
-  ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(79).png)
+* VPC creation with custom CIDR
+* Public subnet (`10.0.1.0/24`)
+* Internet Gateway attached to VPC
+* Public route table with `0.0.0.0/0 → IGW`
+* EC2 instance with public IP for testing connectivity
 
-   Image 09.
+**Validation:**
 
-Than, I have to Associate the route table with the Public Subnet in the page shown in the image below :
+* Successful SSH access to public EC2
+* Internet reachability confirmed using ICMP (ping)
 
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(80).png)
+---
 
-   Image 09.
+### Phase 2: Private Subnet with Controlled Access
 
-#### Step 5: 
-Launching an EC2 in the public subnet in the VPC we created , as shown in the image shown below:
+**Components Implemented:**
 
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(86).png)
+* Private subnet (`10.0.2.0/24`) with no public IPs
+* NAT Gateway deployed in public subnet
+* Private route table with `0.0.0.0/0 → NAT Gateway`
+* Private EC2 instance with inbound access restricted
 
-   Image 10.
-   
-The specs of the EC2 are as follows :
+**Security Controls:**
 
-- OS -> Ubuntu
+* No public IP assigned to private EC2
+* SSH access allowed only from bastion host
+* Network segmentation enforced using route tables
 
-- Instance type -> t3.micro
+---
 
-- Public IP -> Enable
+## Security Design
 
-- Security Group -> allow ssh from anywhere .
+* Bastion host pattern for administrative access
+* Private EC2 fully isolated from the internet
+* Least-privilege Security Group rules
+* No inbound internet traffic to private subnet
+* Controlled outbound traffic via NAT Gateway
 
-#### Test 
-I conneted to the EC2 instance, then I updated and upgraded the OS run on the VM . As shown in the images below.
+---
 
- ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(92).png)
- 
-   Image 11 : Update.
-   
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(95).png)
+## Incident & Troubleshooting Documentation
 
-Image 12 : After the update was done.
+### Incident: SSH Access Failure to Private EC2
 
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(95).png)
+**Impact:**
+Unable to establish SSH connection from bastion host to private EC2.
 
-Image 13: Through the upgrade.
+**Root Cause:**
+SSH key pairs required for the private instance were not available on the bastion host.
 
-After this i ran a ping commmand as shown in the image below :
+**Resolution:**
 
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(98).png)
+* Installed PuTTY and PuTTY Agent
+* Loaded required SSH keys into the agent
+* Enabled SSH agent forwarding on the bastion host
 
-Image 14.
+**Outcome:**
+Successful SSH access to the private EC2 without copying private keys between hosts.
 
+**Prevention:**
+Use agent forwarding or AWS Session Manager to avoid key distribution issues.
 
-As shown in the image above , the EC2 was receiving reply from google sever , which means that phase 1 was a SUCCESS.
+---
 
+## Validation Tests
 
-### Phase 2: Add Private Subnet + NAT Gateway + Private Route Table + Private EC2
+* Verified private EC2 outbound internet access via NAT Gateway
+* Confirmed no direct inbound access to private EC2 from the internet
+* Confirmed controlled SSH access path through bastion host
 
-#### Architecture Diagram For Phase 
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(99).png)
+---
 
-Image 15 
+## Lessons Learned
 
-The steps are the continuation of the following steps in the first phase .
+* Proper route table association is critical for subnet behavior
+* NAT Gateways enable secure outbound access without exposing private resources
+* Bastion hosts reduce attack surface when configured correctly
+* SSH access issues are often related to key management rather than networking
 
-#### Step 6 : Creating a private subnet with the following configuration :
+---
 
- - VPC -> my-1st-vpc
- 
- - Name -> Private-Subnet
- 
- - CIDR -> 10.0.2.0/24
- 
- - and  I did not enable public IP Assignment
-   
-All of these above was done in the image below:
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(100).png)
+## Skills Demonstrated
 
-   Image 16.
+* AWS VPC and subnet design
+* Secure EC2 access patterns
+* Route table and gateway configuration
+* Network isolation and traffic flow control
+* Cloud troubleshooting and incident resolution
 
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(101).png)
+---
 
-Image 17: Summary of the setting done in the creation of the subnet.
+## Future Improvements
 
-#### step 7 : Creating a NAT Gataway in the Public Subnet.
-The reason for this , as shown in the architecture design , is to enable connection between the EC2 in the public subnet to connect to the EC2 in the  Private subnet .
+* Replace SSH access with AWS Systems Manager Session Manager
+* Add Application Load Balancer and Auto Scaling Group
+* Introduce database tier in private subnet
+* Enable VPC Flow Logs and CloudWatch monitoring
 
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(104).png)
+---
 
-Image 18 .
-
-The image above shows the name of the NAT gate way , the VPC it under and other basic configuration done in the creation of the NAT gateway.
-
-#### Step 8 : Creating a Route Table That is Associate to the Private Subnet.
-Creating the route table with the following settings :
-
--Name:Private-RT
-
--VPC : my-1st-vpc
- As shown in the image below :
- ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(105).png)
-
-   Image 19.
-Adding new route to the route table with: 
-
--Destination : 0.0.0.0/0
-
-- Target : NAT gateway (my-NAT-GW)
-  ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(106).png)
-
-  Image 20.
- Associating the route table  with the private subnet, as shown below:
-
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(107).png)
-
-Image 20.
-
-#### Step 9 :Launching an EC2 in the private subnet in the VPC we created , as shown in the images shown below:
-
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(109).png)
-
-   Image 21.
-
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(110).png)
-   Image 22.
-
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(111).png)
-
-Image 23 : in this image , you will see that the security Group  configuration the source ip for incoming traffice is 10.0.2.195 , which is the IP for the EC2 in the public subnet  .
-
-
-The specs of the EC2 are as follows :
-
-- OS -> Ubuntu
-
-- Instance type -> t3.micro
-
-- Public IP -> Diable
-
-- Security Group -> allow ssh from  only 10.0.2.195
-
-  ### Challenges Faced During The Project
-
-  When I try to access the  private EC2 in from the public EC2  this is what i got , shown below 
-
-![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(120).png)
-
-  Image 24.
-
-  The raeson for this was that the keys for two Instance where not stored on the public EC2 . In order to slove this problem i had to dowmload puTTY and start PuTTy agent and add the two keys to it .
-
-  ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(118).png)
-
-   Imgae 25.
-  
-  Then i had to configure agent forwarding  by :
-  
-  - Enter the public EC2 public IP
-  
-  -  go to connection-> ssh -> Auth and then allow agent forworading
-  
-  -  than connect to the public EC2.
-    
-      ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(117).png)
-
-     Image 26: The image above shows a successful connection to the EC2 intance.
-    
-     Then i ran the  command to connect to the private EC2 : " ssh ubuntu@10.0.2.1 " , as shown in the image below :
-
-       ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(117).png)
-
-     ### Test
-     This is to test if the private EC2 has access to the internet through the public EC2 .
-
-       ![Alt aws](https://github.com/Adegbenga-111/AWS-Public-Private-Deployment/blob/main/Screenshot%20(119).png)
-
-     Image 27.
-     As shown in the image above , the test was successful
-
-
-     ### Conclusion
-     This project successfully demonstrated how to design and deploy a secure, production-ready network architecture in AWS using a custom VPC with public and private subnets. The environment was built step-by-step, beginning with a simple VPC and evolving into a complete setup that reflects real-world industry practices.
-
-A public EC2 instance was deployed as a bastion host to provide controlled access to internal resources, while a private EC2 instance was placed in an isolated subnet with no direct internet exposure. Secure access to the private server was achieved using two industry-standard methods: SSH agent forwarding and AWS Systems Manager Session Manager. This ensured that no private keys were copied to the bastion and no SSH ports needed to remain open from the internet.
-
-Critical networking components — including Internet Gateway, NAT Gateway, route tables, and Security Groups — were configured using the principle of least privilege. Through this design, outbound internet access was enabled for private resources without compromising inbound security.
-
-By completing this project, I built a strong foundation in AWS networking, EC2 access patterns, IAM roles, and secure infrastructure design. This environment now serves as a solid base for future expansions such as load balancers, auto-scaling groups, database tiers, and highly available architectures.
+*This project reflects a production-style network design and operational mindset suitable for Cloud Support and Junior Cloud Engineer roles.*
