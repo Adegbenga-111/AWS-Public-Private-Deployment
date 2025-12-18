@@ -122,6 +122,11 @@ Use agent forwarding or AWS Session Manager to avoid key distribution issues.
 
 ---
 
+## Detailed Build Documentation
+Step-by-step implementation, configuration screenshots, and troubleshooting notes are documented in  
+➡️ [`phases.md`](.learning-notes/phase-1.md)
+
+
 ## Lessons Learned
 
 * Proper route table association is critical for subnet behavior
